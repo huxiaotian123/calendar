@@ -48,7 +48,7 @@ public class VariableViewPager extends ViewPager  {
                 break;
 
         }
-        return true;
+        return super.onTouchEvent(ev);
     }
 
     /**
