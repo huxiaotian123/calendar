@@ -6,7 +6,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import xt.calendar.util.CalendarUtil;
+import xt.calendar.widget.MouthView;
 import xt.calendar.widget.VariableViewPager;
+
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,6 +20,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         VariableViewPager viewPager = (VariableViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(new ViewPagerAdapter());
+//        MouthView mouthView = (MouthView) findViewById(R.id.mouthview);
+//        Calendar instance = Calendar.getInstance();
+//         mouthView.setCurrentCalendar(instance);
+
     }
 
 
@@ -34,10 +42,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            TextView textView = new TextView(MainActivity.this);
-            textView.setText("第"+position+"页");
-            container.addView(textView);
-            return textView;
+            MouthView mouthView = new MouthView(container.getContext());
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.MONTH, CalendarUtil.getMouth(cal)+position);
+            mouthView.setCurrentCalendar(cal);
+            container.addView(mouthView);
+            return mouthView;
         }
 
 

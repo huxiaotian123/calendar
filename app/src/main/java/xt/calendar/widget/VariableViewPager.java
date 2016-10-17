@@ -3,6 +3,7 @@ package xt.calendar.widget;
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -27,17 +28,17 @@ public class VariableViewPager extends ViewPager  {
     }
 
 
-
     @Override
-    public boolean onTouchEvent(MotionEvent ev) {
+    public boolean dispatchTouchEvent(MotionEvent ev) {
         switch (ev.getAction()){
             case MotionEvent.ACTION_DOWN:
                 startY = ev.getY();
+                Log.e("hxt","patcdown-----"+startY);
                 break;
             case MotionEvent.ACTION_MOVE:
             case MotionEvent.ACTION_UP:
                 float moveY = ev.getY() - startY;
-
+                Log.e("hxt","patcmove-----"+moveY);
                 if(Math.abs(moveY)>deviation){
                     if(moveY > 0 ){//下移
                         showMouth();
@@ -46,10 +47,33 @@ public class VariableViewPager extends ViewPager  {
                     }
                 }
                 break;
-
         }
-        return super.onTouchEvent(ev);
+        return super.dispatchTouchEvent(ev);
     }
+
+//    @Override
+//    public boolean onTouchEvent(MotionEvent ev) {
+//        switch (ev.getAction()){
+//            case MotionEvent.ACTION_DOWN:
+//                startY = ev.getY();
+//                Log.e("hxt","down-----"+startY);
+//                break;
+//            case MotionEvent.ACTION_MOVE:
+//            case MotionEvent.ACTION_UP:
+//                float moveY = ev.getY() - startY;
+//                Log.e("hxt","move-----"+moveY);
+//                if(Math.abs(moveY)>deviation){
+//                    if(moveY > 0 ){//下移
+//                        showMouth();
+//                    }else {//上移
+//                        showWeek();
+//                    }
+//                }
+//                break;
+//
+//        }
+//        return super.onTouchEvent(ev);
+//    }
 
     /**
      * 上移
