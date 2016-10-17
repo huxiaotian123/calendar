@@ -37,9 +37,25 @@ public class CalendarUtil {
         return calendar.get(Calendar.DAY_OF_MONTH);
     }
 
-    public static boolean isTheSameMouth(Calendar firstCalendar, Calendar secondCalendar) {
+    public static boolean isTheSameMouthAndYear(Calendar firstCalendar, Calendar secondCalendar) {
         if (CalendarUtil.getMouth(firstCalendar) == CalendarUtil.getMouth(secondCalendar)
                 && CalendarUtil.getYear(firstCalendar) == CalendarUtil.getYear(firstCalendar)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean isTheDayOfMouth(Calendar firstCalendar, Calendar secondCalendar) {
+        if (CalendarUtil.getDay(firstCalendar) == CalendarUtil.getDay(secondCalendar)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean isTheDayOfWeek(Calendar firstCalendar, Calendar secondCalendar) {
+        if (CalendarUtil.getDayOfWeek(firstCalendar) == CalendarUtil.getDayOfWeek(secondCalendar)) {
             return true;
         } else {
             return false;
