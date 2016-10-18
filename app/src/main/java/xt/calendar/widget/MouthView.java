@@ -12,6 +12,7 @@ import xt.calendar.R;
 import xt.calendar.base.ListAdapter;
 import xt.calendar.base.ListHolder;
 import xt.calendar.util.CalendarUtil;
+import xt.calendar.util.UiUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -20,11 +21,10 @@ import java.util.List;
 /**
  * Created by Administrator on 2016/10/17.
  */
-public class MouthView extends GridView {
+public class MouthView extends BaseDateView {
 
     private ArrayList<Calendar> calList;
     private MouthAdapter mouthAdapter;
-    private Calendar mCurrentCalendar;
 
     public MouthView(Context context) {
         this(context, null);
@@ -36,21 +36,11 @@ public class MouthView extends GridView {
 
     public MouthView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+
     }
 
 
-    private void init() {
-        setNumColumns(7);
-    }
-
-
-
-
-    public Calendar getCurrentCalendar() {
-        return mCurrentCalendar;
-    }
-
+    @Override
     public void setCurrentCalendar( Calendar currentCal) {
         this.mCurrentCalendar = currentCal;
 
@@ -74,12 +64,14 @@ public class MouthView extends GridView {
             calList.add(calendar);
         }
         mouthAdapter = new MouthAdapter(calList);
-        setAdapter(mouthAdapter);
-        setOnItemClickListener(new OnItemClickListener() {
+
+        mGridView.setAdapter(mouthAdapter);
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 mCurrentCalendar = calList.get(i);
                 mouthAdapter.notifyDataSetChanged();
+                mCalendarView.refreshMcurrentCalendar(mCurrentCalendar);
             }
         });
     }
@@ -101,6 +93,10 @@ public class MouthView extends GridView {
                 protected View initView(ViewGroup parent) {
                     View rootView = View.inflate(parent.getContext(), R.layout.item_cal, null);
                     mTextview = (TextView) rootView.findViewById(R.id.textview);
+                    LayoutParams layoutParams =  new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
+                    layoutParams.width = (UiUtils.getScreenPixelsWidth() - UiUtils.dip2px(10))/7;
+                    layoutParams.height =  layoutParams.width;
+                    mTextview.setLayoutParams(layoutParams);
                     return rootView;
                 }
 

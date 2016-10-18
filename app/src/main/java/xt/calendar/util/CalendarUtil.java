@@ -61,4 +61,10 @@ public class CalendarUtil {
             return false;
         }
     }
+
+    public static Calendar copyCalendar(Calendar firstCalendar){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(CalendarUtil.getYear(firstCalendar), CalendarUtil.getMouth(firstCalendar), CalendarUtil.getDay(firstCalendar));
+        return calendar;
+    }
 }

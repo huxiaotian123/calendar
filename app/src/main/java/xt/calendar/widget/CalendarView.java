@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import xt.calendar.Listener.MouthWeekListener;
 import xt.calendar.util.CalendarUtil;
 
@@ -17,7 +18,7 @@ import java.util.Calendar;
 /**
  * Created by Administrator on 2016/10/13.
  */
-public class VariableViewPager extends ViewPager  {
+public class CalendarView extends ViewPager {
 
     private float deviation = 200;//偏移量
     private float startY; //起点位置
@@ -32,30 +33,30 @@ public class VariableViewPager extends ViewPager  {
 
     private MouthWeekListener mouthWeekListener;
 
-    public VariableViewPager(Context context) {
+    public CalendarView(Context context) {
         super(context);
     }
 
-    public VariableViewPager(Context context, AttributeSet attrs) {
+    public CalendarView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        switch (ev.getAction()){
+        switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 startY = ev.getY();
-                Log.e("hxt","patcdown-----"+startY);
+                Log.e("hxt", "patcdown-----" + startY);
                 break;
             case MotionEvent.ACTION_MOVE:
             case MotionEvent.ACTION_UP:
                 float moveY = ev.getY() - startY;
-                Log.e("hxt","patcmove-----"+moveY);
-                if(Math.abs(moveY)>deviation){
-                    if(moveY > 0 ){//下移
+                Log.e("hxt", "patcmove-----" + moveY);
+                if (Math.abs(moveY) > deviation) {
+                    if (moveY > 0) {//下移
                         showMouth();
-                    }else {//上移
+                    } else {//上移
                         showWeek();
                     }
                 }
@@ -65,18 +66,14 @@ public class VariableViewPager extends ViewPager  {
     }
 
 
-
     /**
      * 上移
      */
     private void showWeek() {
-        if(isMoth){
-            LinearLayout.LayoutParams LayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,200);
-            this.setLayoutParams(LayoutParams);
+        if (isMoth) {
             isMoth = false;
-            querySelectCalendar();
             setAdapter(new WeekViewPagerAdapter());
-            if(null!= mouthWeekListener){
+            if (null != mouthWeekListener) {
                 mouthWeekListener.showWeekView();
             }
         }
@@ -86,24 +83,57 @@ public class VariableViewPager extends ViewPager  {
      * 需要下移
      */
     private void showMouth() {
-        if(!isMoth){
-            LinearLayout.LayoutParams LayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
-            this.setLayoutParams(LayoutParams);
+        if (!isMoth) {
+
             isMoth = true;
-            querySelectCalendar();
             setAdapter(new MouthViewPagerAdapter());
-            if(null!= mouthWeekListener){
+            if (null != mouthWeekListener) {
                 mouthWeekListener.showMouthView();
             }
         }
     }
 
-    public void setCurrentCalendar(Calendar mCurrentCalendar) {
-        this.mCurrentCalendar = mCurrentCalendar;
+    private int mSelectDay;
+    private Calendar startCaldar;
+    public void refreshMcurrentCalendar(Calendar calendar){
+        this.mCurrentCalendar = calendar;
+        mSelectDay = CalendarUtil.getDay(mCurrentCalendar);
+        Toast.makeText(CalendarView.this.getContext(),CalendarUtil.getMouth(mCurrentCalendar)+1+"月",Toast.LENGTH_SHORT).show();
+        if(isMoth){
+            setAdapter(new MouthViewPagerAdapter());
+        }else {
+            setAdapter(new WeekViewPagerAdapter());
+        }
+    }
 
-        setAdapter(new MouthViewPagerAdapter());
 
+    public void setCurrentCalendar(final Calendar currentCal) {
+        startCaldar = currentCal;
+        mCurrentCalendar = currentCal;
+        mSelectDay = CalendarUtil.getDay(mCurrentCalendar);
+        if(isMoth){
+            setAdapter(new MouthViewPagerAdapter());
+        }else {
+            setAdapter(new WeekViewPagerAdapter());
+        }
 
+        setOnPageChangeListener(new OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+//
+             //    Toast.makeText(CalendarView.this.getContext(),CalendarUtil.getMouth(mCurrentCalendar)+1+"月",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     public class MouthViewPagerAdapter extends PagerAdapter {
@@ -121,8 +151,16 @@ public class VariableViewPager extends ViewPager  {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             MouthView mouthView = new MouthView(container.getContext());
-            mCurrentCalendar.set(Calendar.MONTH, CalendarUtil.getMouth(mCurrentCalendar)+position);
-            mouthView.setCurrentCalendar(mCurrentCalendar);
+            mouthView.setCalendarView(CalendarView.this);
+            Calendar calendar = Calendar.getInstance();
+                calendar.set(CalendarUtil.getYear(mCurrentCalendar), CalendarUtil.getMouth(mCurrentCalendar)+position, 1);
+            int daysCount = CalendarUtil.getDaysCount(calendar);
+            if(daysCount <= mSelectDay){
+                calendar.set(Calendar.DAY_OF_MONTH,daysCount);
+            }else {
+                calendar.set(Calendar.DAY_OF_MONTH,mSelectDay);
+            }
+            mouthView.setCurrentCalendar(calendar);
             container.addView(mouthView);
             return mouthView;
         }
@@ -135,7 +173,7 @@ public class VariableViewPager extends ViewPager  {
     }
 
 
-    public class WeekViewPagerAdapter extends PagerAdapter{
+    public class WeekViewPagerAdapter extends PagerAdapter {
 
         @Override
         public int getCount() {
@@ -149,12 +187,13 @@ public class VariableViewPager extends ViewPager  {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            WeekView mouthView = new WeekView(container.getContext());
-
-            mCurrentCalendar.set(Calendar.DAY_OF_MONTH, CalendarUtil.getDay(mCurrentCalendar)+position*7);
-            mouthView.setCurrentCalendar(mCurrentCalendar);
-            container.addView(mouthView);
-            return mouthView;
+            WeekView weekView = new WeekView(container.getContext());
+            weekView.setCalendarView(CalendarView.this);
+            Calendar calendar = CalendarUtil.copyCalendar(mCurrentCalendar);
+            calendar.set(Calendar.DAY_OF_MONTH, CalendarUtil.getDay(mCurrentCalendar) + position*7 );
+            weekView.setCurrentCalendar(calendar);
+            container.addView(weekView);
+            return weekView;
         }
 
 
@@ -164,14 +203,6 @@ public class VariableViewPager extends ViewPager  {
         }
     }
 
-    private void querySelectCalendar(){
-        int currentItem = getCurrentItem();
-        View childView = getChildAt(currentItem);
-        if (childView instanceof  MouthView){
-            mCurrentCalendar =  ((MouthView)childView).getCurrentCalendar();
-        }else {
-            mCurrentCalendar =   ((WeekView)childView).getCurrentCalendar();
-        }
-    }
+
 
 }
