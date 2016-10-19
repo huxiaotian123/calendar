@@ -14,6 +14,7 @@ import xt.calendar.base.ListAdapter;
 import xt.calendar.base.ListHolder;
 import xt.calendar.util.CalendarUtil;
 import xt.calendar.util.UiUtils;
+import xt.calendar.widget.calendar.BaseCalendarView;
 import xt.calendar.widget.calendar.MonthCalendarView;
 
 import java.util.ArrayList;
@@ -27,7 +28,11 @@ public class MonthPageView extends BasePageView {
 
     private ArrayList<Calendar> calList;
     private MouthAdapter mouthAdapter;
-    public static int mSelectDay = -1;
+    private MonthCalendarView monthCalendarView;
+
+    public void setMonthCalendarView(MonthCalendarView monthCalendarView) {
+        this.monthCalendarView = monthCalendarView;
+    }
 
     public MonthPageView(Context context) {
         this(context, null);
@@ -49,14 +54,22 @@ public class MonthPageView extends BasePageView {
 
     @Override
     public void setCurrentCalendar( Calendar currentCal) {
+        if(null == currentCal){
+            return;
+        }
         this.mCurrentCalendar = currentCal;
-        mSelectDay = CalendarUtil.getDay(mCurrentCalendar);
+        if(monthCalendarView.mSelectDay >=CalendarUtil.getDaysCount(mCurrentCalendar)){
+
+        }else {
+            monthCalendarView.mSelectDay = CalendarUtil.getDay(mCurrentCalendar);
+        }
         mouthAdapter.notifyDataSetChanged();
     }
 
 
     @Override
-    public void initPage(Calendar cal) {
+    public void initPage(Calendar cal, BaseCalendarView baseCalendarView) {
+        this.monthCalendarView = (MonthCalendarView) baseCalendarView;
         this.mStandardCal = cal;
         calList = new ArrayList();
         Calendar firstDayCal = Calendar.getInstance();
@@ -88,12 +101,11 @@ public class MonthPageView extends BasePageView {
                 //mXtCalendarView.refreshMcurrentCalendar(mCurrentCalendar);
                 Toast.makeText(view.getContext(),CalendarUtil.toString(mCurrentCalendar),Toast.LENGTH_SHORT).show();
 
-                mSelectDay = CalendarUtil.getDay(mCurrentCalendar);
-
+                monthCalendarView.mSelectDay = CalendarUtil.getDay(mCurrentCalendar);
             }
         });
 
-        mSelectDay = CalendarUtil.getDay(cal);
+
     }
 
 
@@ -131,6 +143,7 @@ public class MonthPageView extends BasePageView {
 
                     if(CalendarUtil.isTheDayOfMouth(data, mCurrentCalendar)){
                         mTextview.setBackgroundColor(Color.RED);
+                        monthCalendarView.mSellectCalendar = data;
                     }else {
                         mTextview.setBackgroundColor(Color.WHITE);
                     }

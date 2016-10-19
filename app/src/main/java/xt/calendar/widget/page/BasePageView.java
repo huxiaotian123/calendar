@@ -8,6 +8,7 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 import xt.calendar.R;
 import xt.calendar.widget.XtCalendarView;
+import xt.calendar.widget.calendar.BaseCalendarView;
 
 import java.util.Calendar;
 
@@ -32,7 +33,7 @@ public abstract class BasePageView extends LinearLayout {
     }
 
     public abstract void setCurrentCalendar(Calendar currentCal);
-    public abstract void initPage(Calendar mSellectCalendar);
+    public abstract void initPage(Calendar mSellectCalendar, BaseCalendarView baseCalendarView);
 
     public BasePageView(Context context) {
         this(context, null);

@@ -3,12 +3,10 @@ package xt.calendar.widget.calendar;
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import xt.calendar.util.CalendarUtil;
-import xt.calendar.widget.page.BasePageView;
 import xt.calendar.widget.page.MonthPageView;
 
 import java.util.Calendar;
@@ -18,8 +16,8 @@ import java.util.Calendar;
  */
 public class MonthCalendarView extends BaseCalendarView {
 
-    private int mSelectDay; //辅助 -->暂时记录 31号/30号/28号的情况
-    private MouthViewPagerAdapter mAdapter;
+    public int mSelectDay; //辅助 -->暂时记录 31号/30号/28号的情况
+    private MonthViewPagerAdapter mAdapter;
 
     public MonthCalendarView(Context context) {
         super(context);
@@ -32,9 +30,9 @@ public class MonthCalendarView extends BaseCalendarView {
     @Override
     public void initCalenDar() {
         mSelectDay = CalendarUtil.getDay(mStartCalendar);
-        mAdapter = new MouthViewPagerAdapter();
+        mAdapter = new MonthViewPagerAdapter();
         setAdapter(mAdapter);
-        addOnPageChangeListener(new OnPageChangeListener() {
+        setOnPageChangeListener(new OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -42,16 +40,12 @@ public class MonthCalendarView extends BaseCalendarView {
 
             @Override
             public void onPageSelected(int position) {
-                if (isPageSelecteByUser) {
-//                    MonthPageView monthPageView = (MonthPageView) findViewById(position);
-//                    Calendar calendarByPostion = getCalendarByPostion(position, monthPageView.mSelectDay);
-//                    mAdapter.setCurrentCalendar(mSellectCalendar);
-//                    Toast.makeText(MonthCalendarView.this.getContext(), CalendarUtil.toString(calendarByPostion), Toast.LENGTH_SHORT).show();
-                } else {
-
-                    mAdapter.setCurrentCalendar(mSellectCalendar);
-                    isPageSelecteByUser = true;
+                if(isMoveByUser){
+                    mSellectCalendar  = getCalendarByPostion(position, mSelectDay);
+                }else {
+                    isMoveByUser = true;
                 }
+                Toast.makeText(MonthCalendarView.this.getContext(), CalendarUtil.toString(mSellectCalendar), Toast.LENGTH_SHORT).show();
 
             }
 
@@ -63,38 +57,24 @@ public class MonthCalendarView extends BaseCalendarView {
     }
 
 
-    boolean isPageSelecteByUser = true;
+
+
 
     @Override
     public void setSellectCalendar(Calendar mSellectCalendar) {
-        isPageSelecteByUser = false;
+        isMoveByUser = false;
         this.mSellectCalendar = mSellectCalendar;
         mSelectDay = CalendarUtil.getDay(mSellectCalendar);
         int monthCount = CalendarUtil.getMonthCount(mStartCalendar, mSellectCalendar) - 1;
         setCurrentItem(monthCount);
-
     }
 
 
-    public class MouthViewPagerAdapter extends PagerAdapter {
 
-        private Calendar mCurrentCalendar;
+
+    public class MonthViewPagerAdapter extends PagerAdapter {
+
         private MonthPageView mCurrentMonthPageView;
-
-        @Override
-        public void setPrimaryItem(ViewGroup container, int position, Object object) {
-            super.setPrimaryItem(container, position, object);
-            MonthPageView view = (MonthPageView) object;
-            if (null != mCurrentCalendar && view != mCurrentMonthPageView) {
-                mCurrentMonthPageView = view;
-                String string = CalendarUtil.toString(mCurrentCalendar);
-                mCurrentMonthPageView.setCurrentCalendar(mCurrentCalendar);
-            }
-        }
-
-        public void setCurrentCalendar(Calendar mCurrentCalendar) {
-            this.mCurrentCalendar = mCurrentCalendar;
-        }
 
         public MonthPageView getCurrentMonthPageView() {
             return mCurrentMonthPageView;
@@ -115,7 +95,9 @@ public class MonthCalendarView extends BaseCalendarView {
             MonthPageView mouthView = new MonthPageView(container.getContext());
             Calendar calendar = Calendar.getInstance();
             calendar.set(CalendarUtil.getYear(mStartCalendar), CalendarUtil.getMonth(mStartCalendar) + position, 1);
-            mouthView.initPage(calendar);
+            mouthView.initPage(calendar,MonthCalendarView.this);
+            mouthView.setCurrentCalendar(mSellectCalendar);
+            mCurrentMonthPageView = mouthView;
             container.addView(mouthView);
             return mouthView;
         }
@@ -141,7 +123,6 @@ public class MonthCalendarView extends BaseCalendarView {
                 calendar.set(Calendar.DAY_OF_MONTH, selectDay);
             }
         }
-
         return calendar;
     }
 

@@ -1,17 +1,8 @@
 package xt.calendar.widget.calendar;
 
 import android.content.Context;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
-import xt.calendar.Listener.MonthWeekListener;
-import xt.calendar.util.CalendarUtil;
-import xt.calendar.widget.page.BasePageView;
-import xt.calendar.widget.page.MonthPageView;
-import xt.calendar.widget.page.WeekPageView;
+import xt.calendar.widget.NoCacheViewPager;
 
 import java.util.Calendar;
 
@@ -19,9 +10,9 @@ import java.util.Calendar;
  * Created by Administrator on 2016/10/13.
  * 月历/周历的基类
  */
-public abstract class BaseCalendarView extends ViewPager {
+public abstract class BaseCalendarView extends NoCacheViewPager {
 
-
+    public boolean isMoveByUser = true; //是否被用户滑动
     public Calendar mSellectCalendar;
     public Calendar mStartCalendar;//开始时间
     public Calendar mEndCalendar;//结束时间
@@ -47,7 +38,7 @@ public abstract class BaseCalendarView extends ViewPager {
     private Calendar startCaldar;
 
 
-    public void setStart2EndCalendar(Calendar startCalendar,Calendar endCalendar) {
+    public void setStart2EndCalendar(Calendar startCalendar, Calendar endCalendar) {
         this.mStartCalendar = startCalendar;
         this.mEndCalendar = endCalendar;
         initCalenDar();
@@ -57,8 +48,8 @@ public abstract class BaseCalendarView extends ViewPager {
 
     public abstract void setSellectCalendar(Calendar mSellectCalendar);
 
-    public interface OnCalendarChangeListener{
-        void  onChange(Calendar calendar);
+    public interface OnCalendarChangeListener {
+        void onChange(Calendar calendar);
     }
 
     public OnCalendarChangeListener mOnCalendarChangeListener;
@@ -67,5 +58,7 @@ public abstract class BaseCalendarView extends ViewPager {
         this.mOnCalendarChangeListener = mOnCalendarChangeListener;
     }
 
+;
 
+    ;
 }

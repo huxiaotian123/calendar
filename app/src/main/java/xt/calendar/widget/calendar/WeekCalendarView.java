@@ -8,9 +8,11 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import xt.calendar.Listener.MonthWeekListener;
 import xt.calendar.util.CalendarUtil;
+import xt.calendar.util.UiUtils;
 import xt.calendar.widget.page.BasePageView;
 import xt.calendar.widget.page.MonthPageView;
 import xt.calendar.widget.page.WeekPageView;
@@ -23,6 +25,7 @@ import java.util.Calendar;
 public class WeekCalendarView extends BaseCalendarView {
 
 
+    private WeekViewPagerAdapter mAdapter;
 
     public WeekCalendarView(Context context) {
         super(context);
@@ -32,15 +35,51 @@ public class WeekCalendarView extends BaseCalendarView {
         super(context, attrs);
     }
 
-
     @Override
     public void initCalenDar() {
-        setAdapter(new WeekViewPagerAdapter());
+
+        mAdapter = new WeekViewPagerAdapter();
+        setAdapter(mAdapter);
+        setOnPageChangeListener(new OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if(isMoveByUser){
+                    if(mSellectCalendar == null){
+                        return;
+                    }
+                    Calendar calendarByPostion = getCalendarByPostion(position);
+                    // TODO: 2016/10/20 加上toString以后才能正确设置 DAY_OF_WEEK -->待study
+                    CalendarUtil. toString(calendarByPostion);
+                    //Log.e("hxt","----"+CalendarUtil.toString(calendarByPostion));
+                    calendarByPostion.set(Calendar.DAY_OF_WEEK,CalendarUtil.getDayOfWeek(mSellectCalendar));
+                    mSellectCalendar = null;
+                    Log.e("hxt",CalendarUtil.toString(calendarByPostion));
+                    mSellectCalendar = calendarByPostion;
+                }else {
+                    isMoveByUser = true;
+                }
+                Toast.makeText(WeekCalendarView.this.getContext(), CalendarUtil.toString(mSellectCalendar), Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
     }
 
+
     @Override
-    public void setSellectCalendar(Calendar mSellectCalendar) {
-        this.mSellectCalendar = mSellectCalendar;
+    public void setSellectCalendar(Calendar cal) {
+        isMoveByUser = false;
+        mSellectCalendar = cal;
         int weekCount = CalendarUtil.getWeekCount(mStartCalendar, mSellectCalendar) -1;
         setCurrentItem(weekCount);
 
@@ -48,38 +87,18 @@ public class WeekCalendarView extends BaseCalendarView {
 
 
 
-
-    public void setCurrentCalendar(final Calendar currentCal) {
-        mSellectCalendar  =currentCal;
-
-    }
-
-
-
     public class WeekViewPagerAdapter extends PagerAdapter {
 
-        private BasePageView basePageView;
+        private WeekPageView mCurrentWeekPageView;
 
-        @Override
-        public void setPrimaryItem(ViewGroup container, int position, Object object) {
-            super.setPrimaryItem(container, position, object);
-            basePageView = (BasePageView) object;
+        public WeekPageView getCurrentWeekPageView() {
+            return mCurrentWeekPageView;
         }
-
-        public Calendar getCurrentCal(){
-            return basePageView.getCurrentCalendar();
-        }
-
-        public void setCurrentCal(Calendar cal){
-            if(null != basePageView){
-                basePageView.setCurrentCalendar(cal);
-            }
-        }
-
 
         @Override
         public int getCount() {
-            return CalendarUtil.getWeekCount(mStartCalendar,mEndCalendar);
+            int weekCount = CalendarUtil.getWeekCount(mStartCalendar, mEndCalendar);
+            return weekCount;
         }
 
         @Override
@@ -90,10 +109,11 @@ public class WeekCalendarView extends BaseCalendarView {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             WeekPageView weekPageView = new WeekPageView(container.getContext());
-         //   weekPageView.setCalendarView(WeekCalendarView.this);
-            Calendar calendar = CalendarUtil.copyCalendar(mStartCalendar);
-            calendar.set(Calendar.DAY_OF_MONTH, CalendarUtil.getDay(mStartCalendar) + position*7 );
-            weekPageView.setCurrentCalendar(calendar);
+            Calendar calendar = getCalendarByPostion(position);
+            weekPageView.initPage(calendar,WeekCalendarView.this);
+            weekPageView.setCurrentCalendar(mSellectCalendar);
+            mCurrentWeekPageView = weekPageView;
+
             container.addView(weekPageView);
             return weekPageView;
         }
@@ -107,4 +127,9 @@ public class WeekCalendarView extends BaseCalendarView {
 
 
 
+    private Calendar getCalendarByPostion(int position) {
+        Calendar calendar = CalendarUtil.copyCalendar(mStartCalendar);
+        calendar.set(Calendar.DAY_OF_MONTH, CalendarUtil.getDay(mStartCalendar) + position*7 );
+        return calendar;
+    }
 }

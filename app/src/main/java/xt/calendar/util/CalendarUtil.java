@@ -121,7 +121,7 @@ public class CalendarUtil {
     public static  int getWeekCount(Calendar firstCalendar,Calendar secondCalendar){
         int firstDayOfWeek = getDayOfWeek(firstCalendar);
         int secondDayOfWeek = getDayOfWeek(secondCalendar);
-        int weekCount = (getDayCount(firstCalendar, secondCalendar) + firstDayOfWeek - 1 + 7 - secondDayOfWeek) / 7;
+        int weekCount = (getDayCount(firstCalendar, secondCalendar) + firstDayOfWeek - 1 + 7 - secondDayOfWeek) / 7+1;
         return weekCount;
     }
 
@@ -137,12 +137,17 @@ public class CalendarUtil {
         secondCalendar.set(Calendar.MINUTE, 0);
         secondCalendar.set(Calendar.SECOND, 0);
         //得到两个日期相差的天数
-        int days = ((int)(secondCalendar.getTime().getTime()/1000)-(int)(firstCalendar.getTime().getTime()/1000))/3600/24;
+        int fistDay = (int) (firstCalendar.getTime().getTime()/(1000*60*60*24));
+        int secondeDay = (int) (secondCalendar.getTime().getTime()/(1000*60*60*24));
 
-        return days;
+        int addDay = secondeDay - fistDay;
+        return addDay;
     }
 
     public static String toString(Calendar cal){
+        if(null == cal){
+            return "";
+        }
         return getYear(cal)+"年"+getRealMonth(cal)+"月"+getDay(cal)+"日";
     }
 

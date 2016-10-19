@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import xt.calendar.Listener.MonthWeekListener;
 import xt.calendar.R;
+import xt.calendar.util.CalendarUtil;
 import xt.calendar.widget.calendar.MonthCalendarView;
 import xt.calendar.widget.calendar.WeekCalendarView;
 
@@ -26,7 +27,7 @@ public class XtCalendarView extends FrameLayout {
     private MonthCalendarView monthCalendarView; //月历
     private WeekCalendarView weekCalendarView;  //周历
 
-
+    private Calendar mSelectCalendar;
 
 
     public XtCalendarView(Context context) {
@@ -49,6 +50,7 @@ public class XtCalendarView extends FrameLayout {
 
 
     private void showViewByState() {
+        Log.e("hxt", CalendarUtil.toString(mSelectCalendar)+"!!!!!!");
         if(isMoth){
             monthCalendarView.setVisibility(VISIBLE);
             weekCalendarView.setVisibility(GONE);
@@ -56,6 +58,8 @@ public class XtCalendarView extends FrameLayout {
             monthCalendarView.setVisibility(GONE);
             weekCalendarView.setVisibility(VISIBLE);
         }
+
+        setSelectCalendar(mSelectCalendar);
     }
 
 
@@ -97,6 +101,7 @@ public class XtCalendarView extends FrameLayout {
      */
     private void showWeek() {
         if (isMoth) {
+            mSelectCalendar = getSelectCalendar();
             isMoth = false;
             showViewByState();
             if (null != monthWeekListener) {
@@ -110,6 +115,7 @@ public class XtCalendarView extends FrameLayout {
      */
     private void showMouth() {
         if (!isMoth) {
+            mSelectCalendar = getSelectCalendar();
             isMoth = true;
             showViewByState();
             if (null != monthWeekListener) {
@@ -125,7 +131,12 @@ public class XtCalendarView extends FrameLayout {
         weekCalendarView.setStart2EndCalendar(startCalendar,endCalendar);
     }
 
+
     public void setSelectCalendar(Calendar cal){
+        if(null == cal){
+            return;
+        }
+        mSelectCalendar = cal;
         if(isMoth){
             monthCalendarView.setSellectCalendar(cal);
         }else {
@@ -134,4 +145,16 @@ public class XtCalendarView extends FrameLayout {
         }
     }
 
+    public Calendar getSelectCalendar(){
+        Calendar weekCalendar = weekCalendarView.mSellectCalendar;
+        String s = CalendarUtil.toString(weekCalendar);
+        Calendar mouthCalendar = monthCalendarView.mSellectCalendar;
+        String s1 = CalendarUtil.toString(mouthCalendar);
+
+        if(monthCalendarView.getVisibility() == VISIBLE){
+            return monthCalendarView.mSellectCalendar;
+        }else {
+            return weekCalendarView.mSellectCalendar;
+        }
+    }
 }
