@@ -1,4 +1,4 @@
-package xt.calendar.widget;
+package xt.calendar.widget.page;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -6,7 +6,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.TextView;
 import xt.calendar.R;
 import xt.calendar.base.ListAdapter;
@@ -21,66 +20,58 @@ import java.util.List;
 /**
  * Created by Administrator on 2016/10/17.
  */
-public class MouthView extends BaseDateView {
+public class WeekPageView extends BasePageView {
 
     private ArrayList<Calendar> calList;
-    private MouthAdapter mouthAdapter;
+    private WeekAdapter weekAdapter;
 
-    public MouthView(Context context) {
+    public WeekPageView(Context context) {
         this(context, null);
     }
 
-    public MouthView(Context context, AttributeSet attrs) {
+    public WeekPageView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public MouthView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public WeekPageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
     }
 
-
     @Override
-    public void setCurrentCalendar( Calendar currentCal) {
-        this.mCurrentCalendar = currentCal;
-
+    public void setCurrentCalendar(Calendar currentCal) {
+        mCurrentCalendar = currentCal;
         calList = new ArrayList();
-        Calendar firstDayCal = Calendar.getInstance();
-        firstDayCal.set(CalendarUtil.getYear(mCurrentCalendar), CalendarUtil.getMouth(mCurrentCalendar), 1);
-        int firstDayOfWeek = CalendarUtil.getDayOfWeek(firstDayCal);
+        int dayOfWeek = CalendarUtil.getDayOfWeek(mCurrentCalendar);
 
         //补全之前的日历
-        for (int a = 1; a < firstDayOfWeek; a++) {
+        for (int a = 1; a < 8; a++) {
             Calendar calendar = Calendar.getInstance();
-            calendar.set(CalendarUtil.getYear(mCurrentCalendar), CalendarUtil.getMouth(mCurrentCalendar), a+1 - firstDayOfWeek);
+            calendar.set(CalendarUtil.getYear(mCurrentCalendar), CalendarUtil.getMonth(mCurrentCalendar), CalendarUtil.getDay(mCurrentCalendar) - dayOfWeek + a);
             calList.add(calendar);
         }
-
-
-        //补全之前的日历
-        for (int a = 0; a < CalendarUtil.getDaysCount(mCurrentCalendar); a++) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(CalendarUtil.getYear(mCurrentCalendar), CalendarUtil.getMouth(mCurrentCalendar), a +1 );
-            calList.add(calendar);
-        }
-        mouthAdapter = new MouthAdapter(calList);
-
-        mGridView.setAdapter(mouthAdapter);
+        weekAdapter = new WeekAdapter(calList);
+        mGridView.setAdapter(weekAdapter);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 mCurrentCalendar = calList.get(i);
-                mouthAdapter.notifyDataSetChanged();
-                mCalendarView.refreshMcurrentCalendar(mCurrentCalendar);
+                weekAdapter.notifyDataSetChanged();
+              //  mXtCalendarView.refreshMcurrentCalendar(mCurrentCalendar);
             }
         });
     }
 
+    @Override
+    public void initPage(Calendar mSellectCalendar) {
 
-    private class MouthAdapter extends ListAdapter<Calendar> {
+    }
 
 
-        public MouthAdapter(List<Calendar> datas) {
+    private class WeekAdapter extends ListAdapter<Calendar> {
+
+
+        public WeekAdapter(List<Calendar> datas) {
             super(datas);
         }
 
@@ -102,23 +93,14 @@ public class MouthView extends BaseDateView {
 
                 @Override
                 protected void refreshUI(Calendar data, int postion) {
-                    if (CalendarUtil.isTheSameMouthAndYear(data, mCurrentCalendar)) {
-                        mTextview.setVisibility(VISIBLE);
-                        mTextview.setText(CalendarUtil.getDay(data)+"");
-                    } else {
-                        mTextview.setVisibility(INVISIBLE);
-                    }
-
-                    if(CalendarUtil.isTheDayOfMouth(data, mCurrentCalendar)){
+                    mTextview.setText(CalendarUtil.getDay(data) + "");
+                    if (CalendarUtil.isTheDayOfMouth(data, mCurrentCalendar)) {
                         mTextview.setBackgroundColor(Color.RED);
-                    }else {
+                    } else {
                         mTextview.setBackgroundColor(Color.WHITE);
                     }
                 }
             };
         }
-
-
     }
-
 }

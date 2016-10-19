@@ -1,4 +1,4 @@
-package xt.calendar.widget;
+package xt.calendar.widget.page;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -7,20 +7,24 @@ import android.view.View;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import xt.calendar.R;
+import xt.calendar.widget.XtCalendarView;
 
 import java.util.Calendar;
 
 /**
  * Created by Administrator on 2016/10/18.
  */
-public abstract class BaseDateView extends LinearLayout {
+public abstract class BasePageView extends LinearLayout {
+
+    public Calendar mStandardCal;
+
     public Calendar mCurrentCalendar;
-    public CalendarView mCalendarView;
+    public XtCalendarView mXtCalendarView;
     public GridView mGridView;
 
 
-    public void setCalendarView(CalendarView mCalendarView) {
-        this.mCalendarView = mCalendarView;
+    public void setCalendarView(XtCalendarView mXtCalendarView) {
+        this.mXtCalendarView = mXtCalendarView;
     }
 
     public Calendar getCurrentCalendar() {
@@ -28,21 +32,21 @@ public abstract class BaseDateView extends LinearLayout {
     }
 
     public abstract void setCurrentCalendar(Calendar currentCal);
+    public abstract void initPage(Calendar mSellectCalendar);
 
-    public BaseDateView(Context context) {
+    public BasePageView(Context context) {
         this(context, null);
     }
 
-    public BaseDateView(Context context, AttributeSet attrs) {
+    public BasePageView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public BaseDateView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public BasePageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         // 导入布局
         View inflate = LayoutInflater.from(context).inflate(R.layout.view_basedate, this, true);
         mGridView = (GridView) inflate.findViewById(R.id.grideview);
-
     }
 
 
