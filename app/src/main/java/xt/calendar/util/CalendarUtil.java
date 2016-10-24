@@ -12,6 +12,7 @@ public class CalendarUtil {
 
     /**
      * 一个月有多少天
+     *
      * @param calendar
      * @return
      */
@@ -34,7 +35,7 @@ public class CalendarUtil {
     }
 
     public static int getRealMonth(@NonNull Calendar calendar) {
-        return calendar.get(Calendar.MONTH)+1;
+        return calendar.get(Calendar.MONTH) + 1;
     }
 
     public static int getYear(@NonNull Calendar calendar) {
@@ -47,6 +48,7 @@ public class CalendarUtil {
 
     /**
      * 年月份相同
+     *
      * @param firstCalendar
      * @param secondCalendar
      * @return
@@ -62,12 +64,13 @@ public class CalendarUtil {
 
     /**
      * 每月的同一天
+     *
      * @param firstCalendar
      * @param secondCalendar
      * @return
      */
     public static boolean isTheDayOfMouth(Calendar firstCalendar, Calendar secondCalendar) {
-        if(null == firstCalendar || null == secondCalendar){
+        if (null == firstCalendar || null == secondCalendar) {
             return false;
         }
         if (CalendarUtil.getDay(firstCalendar) == CalendarUtil.getDay(secondCalendar)) {
@@ -79,6 +82,7 @@ public class CalendarUtil {
 
     /**
      * 每周的同一天
+     *
      * @param firstCalendar
      * @param secondCalendar
      * @return
@@ -93,10 +97,11 @@ public class CalendarUtil {
 
     /**
      * 复制相同的日历
+     *
      * @param firstCalendar
      * @return
      */
-    public static Calendar copyCalendar(Calendar firstCalendar){
+    public static Calendar copyCalendar(Calendar firstCalendar) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(CalendarUtil.getYear(firstCalendar), CalendarUtil.getMonth(firstCalendar), CalendarUtil.getDay(firstCalendar));
         return calendar;
@@ -106,29 +111,29 @@ public class CalendarUtil {
     /**
      * 时间间隔了多少个月
      */
-    public static  int getMonthCount(Calendar firstCalendar,Calendar secondCalendar){
+    public static int getMonthCount(Calendar firstCalendar, Calendar secondCalendar) {
         int addYear = CalendarUtil.getYear(secondCalendar) - CalendarUtil.getYear(firstCalendar);
         int addMonth = CalendarUtil.getMonth(secondCalendar) - CalendarUtil.getMonth(firstCalendar);
-        if(addYear < 0){
+        if (addYear < 0) {
             return 0;
         }
-        return  addYear*12+addMonth+1;
+        return addYear * 12 + addMonth + 1;
     }
 
     /**
      * 时间间隔了多少周
      */
-    public static  int getWeekCount(Calendar firstCalendar,Calendar secondCalendar){
+    public static int getWeekCount(Calendar firstCalendar, Calendar secondCalendar) {
         int firstDayOfWeek = getDayOfWeek(firstCalendar);
         int secondDayOfWeek = getDayOfWeek(secondCalendar);
-        int weekCount = (getDayCount(firstCalendar, secondCalendar) + firstDayOfWeek - 1 + 7 - secondDayOfWeek) / 7+1;
+        int weekCount = (getDayCount(firstCalendar, secondCalendar) + firstDayOfWeek - 1 + 7 - secondDayOfWeek) / 7 + 1;
         return weekCount;
     }
 
     /**
      * 时间间隔了多少天
      */
-    public static  int getDayCount(Calendar firstCalendar,Calendar secondCalendar){
+    public static int getDayCount(Calendar firstCalendar, Calendar secondCalendar) {
         //设置时间为0时
         firstCalendar.set(Calendar.HOUR_OF_DAY, 0);
         firstCalendar.set(Calendar.MINUTE, 0);
@@ -137,18 +142,30 @@ public class CalendarUtil {
         secondCalendar.set(Calendar.MINUTE, 0);
         secondCalendar.set(Calendar.SECOND, 0);
         //得到两个日期相差的天数
-        int fistDay = (int) (firstCalendar.getTime().getTime()/(1000*60*60*24));
-        int secondeDay = (int) (secondCalendar.getTime().getTime()/(1000*60*60*24));
+        int fistDay = (int) (firstCalendar.getTime().getTime() / (1000 * 60 * 60 * 24));
+        int secondeDay = (int) (secondCalendar.getTime().getTime() / (1000 * 60 * 60 * 24));
 
         int addDay = secondeDay - fistDay;
         return addDay;
     }
 
-    public static String toString(Calendar cal){
-        if(null == cal){
+    public static String toString(Calendar cal) {
+        if (null == cal) {
             return "";
         }
-        return getYear(cal)+"年"+getRealMonth(cal)+"月"+getDay(cal)+"日";
+        return getYear(cal) + "年" + getRealMonth(cal) + "月" + getDay(cal) + "日";
     }
 
+    public static String getDate(Calendar calendar) {
+        String year = CalendarUtil.getYear(calendar) + "";
+        String mouth = CalendarUtil.getRealMonth(calendar) + "";
+        if (mouth.length() == 1) {
+            mouth = "0" + mouth;
+        }
+        String day = CalendarUtil.getDay(calendar) + "";
+        if (day.length() == 1) {
+            day = "0" + day;
+        }
+        return year + mouth + day;
+    }
 }

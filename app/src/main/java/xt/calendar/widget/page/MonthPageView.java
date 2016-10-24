@@ -7,8 +7,10 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import xt.calendar.R;
 import xt.calendar.base.ListAdapter;
 import xt.calendar.base.ListHolder;
@@ -53,14 +55,14 @@ public class MonthPageView extends BasePageView {
     }
 
     @Override
-    public void setCurrentCalendar( Calendar currentCal) {
-        if(null == currentCal){
+    public void setCurrentCalendar(Calendar currentCal) {
+        if (null == currentCal) {
             return;
         }
         this.mCurrentCalendar = currentCal;
-        if(monthCalendarView.mSelectDay >=CalendarUtil.getDaysCount(mCurrentCalendar)){
+        if (monthCalendarView.mSelectDay >= CalendarUtil.getDaysCount(mCurrentCalendar)) {
 
-        }else {
+        } else {
             monthCalendarView.mSelectDay = CalendarUtil.getDay(mCurrentCalendar);
         }
         mouthAdapter.notifyDataSetChanged();
@@ -76,18 +78,27 @@ public class MonthPageView extends BasePageView {
         firstDayCal.set(CalendarUtil.getYear(mStandardCal), CalendarUtil.getMonth(mStandardCal), 1);
         int firstDayOfWeek = CalendarUtil.getDayOfWeek(firstDayCal);
 
+
         //补全之前的日历
-        for (int a = 1; a < firstDayOfWeek; a++) {
+        if (firstDayOfWeek == 1) {
+            firstDayOfWeek = 7;
+        } else {
+            firstDayOfWeek--;
+        }
+
+        for (int a = (firstDayOfWeek - 1); a > 0; a--) {
             Calendar calendar = Calendar.getInstance();
-            calendar.set(CalendarUtil.getYear(mStandardCal), CalendarUtil.getMonth(mStandardCal), a+1 - firstDayOfWeek);
+            calendar.set(CalendarUtil.getYear(mStandardCal), CalendarUtil.getMonth(mStandardCal), 1 - a);
             calList.add(calendar);
         }
 
 
-        //补全之前的日历
+//
+//
+//        //补全之后的日历
         for (int a = 0; a < CalendarUtil.getDaysCount(mStandardCal); a++) {
             Calendar calendar = Calendar.getInstance();
-            calendar.set(CalendarUtil.getYear(mStandardCal), CalendarUtil.getMonth(mStandardCal), a +1 );
+            calendar.set(CalendarUtil.getYear(mStandardCal), CalendarUtil.getMonth(mStandardCal), a + 1);
             calList.add(calendar);
         }
         mouthAdapter = new MouthAdapter(calList);
@@ -99,7 +110,7 @@ public class MonthPageView extends BasePageView {
                 mCurrentCalendar = calList.get(i);
                 mouthAdapter.notifyDataSetChanged();
                 //mXtCalendarView.refreshMcurrentCalendar(mCurrentCalendar);
-                Toast.makeText(view.getContext(),CalendarUtil.toString(mCurrentCalendar),Toast.LENGTH_SHORT).show();
+                Toast.makeText(view.getContext(), CalendarUtil.toString(mCurrentCalendar), Toast.LENGTH_SHORT).show();
 
                 monthCalendarView.mSelectDay = CalendarUtil.getDay(mCurrentCalendar);
             }
@@ -125,9 +136,9 @@ public class MonthPageView extends BasePageView {
                 protected View initView(ViewGroup parent) {
                     View rootView = View.inflate(parent.getContext(), R.layout.item_cal, null);
                     mTextview = (TextView) rootView.findViewById(R.id.textview);
-                    LayoutParams layoutParams =  new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
-                    layoutParams.width = (UiUtils.getScreenPixelsWidth() - UiUtils.dip2px(10))/7;
-                    layoutParams.height =  layoutParams.width;
+                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    layoutParams.width = (UiUtils.getScreenPixelsWidth() - UiUtils.dip2px(10)) / 7;
+                    layoutParams.height = layoutParams.width;
                     mTextview.setLayoutParams(layoutParams);
                     return rootView;
                 }
@@ -135,16 +146,16 @@ public class MonthPageView extends BasePageView {
                 @Override
                 protected void refreshUI(Calendar data, int postion) {
                     if (CalendarUtil.isTheSameMouthAndYear(data, mStandardCal)) {
-                        mTextview.setVisibility(VISIBLE);
-                        mTextview.setText(CalendarUtil.getDay(data)+"");
+                        mTextview.setBackgroundResource(R.drawable.yellow_cir);
+                        mTextview.setText(CalendarUtil.getDay(data) + "");
                     } else {
-                        mTextview.setVisibility(INVISIBLE);
+                        //  mTextview.setVisibility(INVISIBLE);
                     }
 
-                    if(CalendarUtil.isTheDayOfMouth(data, mCurrentCalendar)){
-                        mTextview.setBackgroundColor(Color.RED);
+                    if (CalendarUtil.isTheDayOfMouth(data, mCurrentCalendar)) {
+                        mTextview.setBackgroundResource(R.drawable.yellow_cir);
                         monthCalendarView.mSellectCalendar = data;
-                    }else {
+                    } else {
                         mTextview.setBackgroundColor(Color.WHITE);
                     }
                 }

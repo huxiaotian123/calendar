@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,6 +60,12 @@ public class WeekPageView extends BasePageView {
         weekCalendarView = (WeekCalendarView) baseCalendarView;
        calList = new ArrayList();
         int dayOfWeek = CalendarUtil.getDayOfWeek(mStandardCal);
+        //补全之前的日历
+        if (dayOfWeek == 1) {
+            dayOfWeek = 7;
+        } else {
+            dayOfWeek--;
+        }
 
         //补全之前的日历
         for (int a = 1; a < 8; a++) {
@@ -95,7 +102,7 @@ public class WeekPageView extends BasePageView {
                 protected View initView(ViewGroup parent) {
                     View rootView = View.inflate(parent.getContext(), R.layout.item_cal, null);
                     mTextview = (TextView) rootView.findViewById(R.id.textview);
-                    LayoutParams layoutParams =  new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
+                    FrameLayout.LayoutParams layoutParams =  new  FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
                     layoutParams.width = (UiUtils.getScreenPixelsWidth() - UiUtils.dip2px(10))/7;
                     layoutParams.height =  layoutParams.width;
                     mTextview.setLayoutParams(layoutParams);
@@ -106,7 +113,7 @@ public class WeekPageView extends BasePageView {
                 protected void refreshUI(Calendar data, int postion) {
                     mTextview.setText(CalendarUtil.getDay(data) + "");
                     if (CalendarUtil.isTheDayOfMouth(data, mCurrentCalendar)) {
-                        mTextview.setBackgroundColor(Color.RED);
+                        mTextview.setBackgroundResource(R.drawable.yellow_cir);
                         weekCalendarView.mSellectCalendar = data;
                     } else {
                         mTextview.setBackgroundColor(Color.WHITE);

@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-    <TextView
-            android:id="@+id/textview"
-            android:gravity="center"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            tools:text="1"/>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fl_parent"
+    android:layout_width="20dp"
+    android:layout_height="20dp"
+    android:orientation="vertical">
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/textview"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:gravity="center"
+        tools:text="1" />
+
+    <View
+        android:id="@+id/point"
+        android:layout_width="5dp"
+        android:layout_height="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_gravity="center_horizontal|bottom"
+        android:background="@drawable/yellow_cir" />
+</FrameLayout>
